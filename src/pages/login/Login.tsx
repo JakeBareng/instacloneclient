@@ -1,0 +1,17 @@
+import style from './Login.module.scss';
+
+const Login = () => {
+    style;
+
+    return (
+        <div>
+            <h1>Login</h1>
+        </div>
+    );
+
+}
+
+
+
+
+export default Login;
