@@ -1,19 +1,15 @@
-section {
+.section_container {
     width: 100vw;
     height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding: 30px;
-    margin: auto;
 
-    .container {
+    div {
         width: 600px;
         height: fit-content;
         display: flex;
         flex-direction: column;
-        background: black;
         padding: 30px;
         margin: auto;
+
         h3 {
             margin: 0;
             margin-bottom: 15px;

@@ -1,98 +1,153 @@
 import { useContext, useState, createContext } from "react";
+import { ReactNode } from "react";
 
-//TODO: create user interface
+
+
+type AuthResponse = {
+    success: boolean;
+    message: string;
+}
+
 interface AuthContextType {
 
     // impliment user in the future, such as claims, roles, etc.
     // user: any;
-    error: { message: string } | null;
-
     login: (
         email: string,
         password: string
-    ) => void;
+    ) => Promise<AuthResponse>;
 
-    logout: () => void;
+    logout: () => Promise<AuthResponse>;
 
     register: (
         email: string,
         username: string,
         password: string
-    ) => void;
+    ) => Promise<AuthResponse>;
 }
 
-const AuthContext = createContext<AuthContextType | null>( null);
+const AuthContext = createContext<AuthContextType | null>(null);
 
-import { ReactNode } from "react";
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const API_URL = "http://localhost:5147";
-    const [error, setError] = useState(null);
+    const API_URL = import.meta.env.VITE_API_URL;
 
     // Login function
     const login = async (email: string , password: string ) => {
+
         // Call the login API
-        const res: Response = await fetch(`${API_URL}/login`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, password })
-        })
-    
-        let data = await res.json();
-    
-        if (!res.ok) {
-            setError(data.errors);
-            return;
+        try {
+            const res: Response = await fetch(`${API_URL}/login`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            })
+
+            if (!res.ok) {
+                return {
+                    success: false,
+                    message: 'Could not log in, please check your credentials.'
+                }
+            }
+
+            return {
+                success: true,
+                message: 'Logged in successfully'
+            }
+        } catch (error) {
+            return {
+                success: false,
+                message: 'An error occurred while logging in'
+            }
         }
+
     }
 
     // Logout function
     const logout = async () => {
         // Call the logout API
-        const res = await fetch(`${API_URL}/logout`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include'
-        }); 
+        try {
+            const res = await fetch(`${API_URL}/logout`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include'
+            }); 
 
-        let data = await res.json();
+            if (!res.ok) {
+                return {
+                    success: false,
+                    message: 'Could not log out',
+                }
+            }
 
-        if (!res.ok)
-            setError(data.errors);
+            return {
+                success: true,
+                message: 'Logged out successfully'
+            }
+        } catch (error) {
+            return {
+                success: false,
+                message: 'An error occurred while logging out'
+            }
+        }
     }
 
     // Register function
-    const register = async (email: string, username: string, password: string ) => {
-        // Call the register API
-        const res = await fetch(`${API_URL}/register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, username, password })
-        });
+    const register = async (email: string, username: string, password: string) => {
+        try {
+            const payload = { email, username, password };
+    
+            const response = await fetch(`${API_URL}/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
 
-        let data = await res.json();
+            if (!response.ok) {
+                const errorData = await response.json();
 
-        if (!res.ok)
-            setError(data.errors);
+                return {
+                    success: false,
+                    message: `Error ${errorData.status}: ${errorData.title}. ${Object.values(errorData.errors).join(' ')}`,
+                }
+            }
+
+            return {
+                success: true,
+                message: 'Registration successful',
+            };
+        }
+        catch (error) {
+            console.error(error);
+
+            return {
+                success: false,
+                message: 'An error occurred',
+            }
+
+        }
     }
 
     return (
-        <AuthContext.Provider value={{ login, logout, register, error }}>
+        <AuthContext.Provider value={{ login, logout, register}}>
             {children}
         </AuthContext.Provider>
     )
 }
 
 
-
 const useAuth = () => {
-    return useContext(AuthContext);
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
 }
 
-export default useAuth;
+export { AuthProvider, useAuth };
