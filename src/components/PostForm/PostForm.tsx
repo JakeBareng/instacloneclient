@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import useServices from "../hooks/useServices";
+import useServices from "../../hooks/useServices";
 const PostForm = () => {
     const [file, setFile] = useState<File | null>(null);
     const [caption, setCaption] = useState<string>('');
@@ -40,7 +40,7 @@ const PostForm = () => {
                     setFile(files[0]);
                 }
             }}/>
-            <input type="text" name="caption" id="caption" onChange={e => setCaption(e.target.value)} value={caption}/>
+            <input type="text" name="caption" id="caption" placeholder="Caption" onChange={e => setCaption(e.target.value)} value={caption}/>
             <input type="submit" value="Create Post" />
             <span>{error}</span>
         </form>

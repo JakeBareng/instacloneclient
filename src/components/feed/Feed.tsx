@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import useServices from "../../hooks/useServices"
 import { Post } from "../../types/types";
-import PostElement from "./Post";
-import PostForm from "../PostForm";
+import PostElement from "./post/Post";
+import PostForm from "../PostForm/PostForm";
+import { useAuth } from "../../hooks/useAuth";
 
 
 const Feed = () => {
-    const service = useServices();
     const [posts, setPosts] = useState<Post[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+
+    const service = useServices();
 
     useEffect(() => {
         if (posts === null)
@@ -18,7 +20,9 @@ const Feed = () => {
 
     const getPosts = async () => {
         const res = await service.getPosts();
+
         setLoading(true);
+
         if (res.success) {
             setError("");
             setPosts(res.data);

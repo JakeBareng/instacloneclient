@@ -1,5 +1,3 @@
-import './Navbar.module.scss'
-
 const Navbar = () => {
 
     /**

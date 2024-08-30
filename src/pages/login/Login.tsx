@@ -29,7 +29,7 @@ const Login = () => {
     return (
         <section className={style.section_container}>
             <div>
-                <h3>Sign up</h3>
+                <h3>Login</h3>
                 <form onSubmit={handleSubmit} method="post">
                     <label htmlFor="Email">Email: </label>
                     <input type="email" autoComplete='email' name="Email" id="Email" value={email} onChange={e => setEmail(e.target.value)}/>

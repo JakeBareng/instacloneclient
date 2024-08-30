@@ -1,5 +1,6 @@
 import { useContext, useState, createContext } from "react";
 import { ReactNode } from "react";
+import useTokens from "./useTokens";
 
 
 
@@ -26,16 +27,21 @@ interface AuthContextType {
     ) => Promise<AuthResponse>;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+type LoginResponse = {
+    accessToken: string,
+    expiresIn: number,
+    refreshToken: string,
+    tokenType: string,
+}
 
+const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
     const API_URL = import.meta.env.VITE_API_URL;
+    const tokenService = useTokens();
 
     // Login function
     const login = async (email: string , password: string ) => {
-
-        // Call the login API
         try {
             const res: Response = await fetch(`${API_URL}/login`,{
                 method: 'POST',
@@ -52,10 +58,15 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                 }
             }
 
+            const data : LoginResponse = await res.json();
+            const { accessToken, refreshToken } = data;
+            tokenService.setTokens(accessToken, refreshToken);
+            
             return {
                 success: true,
                 message: 'Logged in successfully'
             }
+
         } catch (error) {
             return {
                 success: false,
@@ -73,6 +84,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${tokenService.accessToken}`
                 },
                 credentials: 'include'
             }); 
@@ -124,7 +136,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
             };
         }
         catch (error) {
-            console.error(error);
 
             return {
                 success: false,

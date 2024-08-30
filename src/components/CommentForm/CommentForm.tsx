@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useServices from "../hooks/useServices";
+import useServices from "../../hooks/useServices";
 
 const CommentForm = (postId: number) => {
     const [comment, setComment] = useState<string>('');

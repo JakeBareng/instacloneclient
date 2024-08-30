@@ -1,0 +1,42 @@
+.container {
+    width: 500px;
+    img {
+        width: 100%;
+    } 
+    .heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        } 
+        h3 {
+        }
+    }
+
+    .footer {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 5px;
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-content: center;
+            img {
+                width: 30px;
+            }
+        }
+
+
+    }
+
+}
