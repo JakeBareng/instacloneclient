@@ -5,11 +5,13 @@ import styles from "./post.module.scss"
 import userPlaceholder from "/user_placeholder.jpg"
 import heart from "/heart.svg"
 import PostCommentForm from "./postCommentForm";
+import Comment from "./Comment";
 
 
 const Post = (post : PostType) => {
     const service = useServices();
     const [liked, setLiked] = useState(false);
+    const [viewComments, setViewComments] = useState(false);
     const {
         id,
         caption,
@@ -54,14 +56,23 @@ const Post = (post : PostType) => {
             </div>
             <img src={fileAddress} alt="img"/>
             <div className={styles.footer}>
-                <button onClick={handleLike}>
+                <button className={styles.button} onClick={handleLike}>
                     <img src={heart} alt="" />
                 </button>
-                <p>{likes.length} likes</p>
-                <p>{instaCloneUser.userCreatedUsername} {caption}</p>
-                <a href="#">
-                    <p>View all {comments.length} comments</p>
-                </a>
+                <p className={styles.likes}>{likes.length} likes</p>
+                <p className={styles.caption}> <span>{instaCloneUser.userCreatedUsername}</span>: {caption}</p>
+                {
+                    viewComments?
+                    <a href="#">
+                        <p>View all {comments.length} comments</p>
+                    </a> :
+                    comments.map(data => {
+                        return (
+                            <Comment key={data.id} comment={data}/>
+                        )
+                    })
+
+                }
                 <PostCommentForm postId={id}/>
             </div>
         </div>

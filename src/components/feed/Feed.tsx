@@ -48,7 +48,7 @@ const Feed = () => {
                     <PostForm /> 
                     {
                         posts.map(post => {
-                            return <PostElement {...post} />
+                            return <PostElement key={post.id} {...post} />
                         })
                     }
                 </>

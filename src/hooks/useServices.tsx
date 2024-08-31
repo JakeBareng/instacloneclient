@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import useTokens from "./useTokens";
 
 type response = {
@@ -35,13 +36,12 @@ const useServices = () : Services => {
     const API_URL = import.meta.env.VITE_API_URL + "/api";
     const tokenService = useTokens();
     const defaultHeaders = {
-        'Authorization': `Bearer ${tokenService.accessToken}`
+        'Authorization': `Bearer ${tokenService.getAccessToken()}`,
     }
 
     // get posts
     const getPosts = async () => {
         try {
-            console.log(defaultHeaders);
             const res = await fetch(`${API_URL}/Posts`, { 
                 method: 'GET',
                 headers: {
